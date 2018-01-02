@@ -7,10 +7,13 @@ uses
 
 type
 
-  IADLSFileManager = interface ['{AA452B82-AD29-463F-B93F-D1D51F517AC6}']
+  IADLSFileManager = interface
+  ['{AA452B82-AD29-463F-B93F-D1D51F517AC6}']
     // Input
-    function GetFMFilePath: string;
     function GetFMBaseURL: string;
+    function GetFMDirectory: string;
+    function GetFMFilePath: string;
+
   end;
 
 implementation

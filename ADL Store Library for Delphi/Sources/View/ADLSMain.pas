@@ -26,9 +26,8 @@ uses
   Vcl.ComCtrls, Vcl.Imaging.pngimage;
 
 type
-  TfrmADLSMain= class(TForm, IADLSConnector, IADLSFileManager)
+  TfrmADLSMain= class(TForm, IADLSView, IADLSFileManager)
     pnlHeader: TPanel;
-    pnlResponse: TPanel;
     pgcMain: TPageControl;
     tsConnector: TTabSheet;
     tsFileManager: TTabSheet;
@@ -47,12 +46,15 @@ type
     btnUpload: TButton;
     odSelectFile: TOpenDialog;
     imgAzureDataLake: TImage;
+    sbResponse: TScrollBox;
     memoResponseData: TMemo;
+    edt_Directory: TLabeledEdit;
     procedure FormCreate(Sender: TObject);
     procedure btnGetTokenClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnOpenFileClick(Sender: TObject);
     procedure btnUploadClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FADLSConnectorPresenter: TADLSConnectorPresenter;
     FADLSFileManagerPresenter: TADLSFileManagerPresenter;
@@ -64,8 +66,9 @@ type
     function GetAccessTokenEndpoint: string;
     function GetAuthorizationEndpoint: string;
     // Input file manager
-    function GetFMFilePath: string;
     function GetFMBaseURL: string;
+    function GetFMDirectory: string;
+    function GetFMFilePath: string;
     // Output connector
     procedure SetAccessToken(const AValue: string);
     procedure SetResponseData(const AValue: string);
@@ -109,6 +112,12 @@ begin
   FADLSFileManagerPresenter.GetListFolders;
 end;
 
+procedure TfrmADLSMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  FADLSFileManagerPresenter.Free;
+  FADLSConnectorPresenter.Free;
+end;
+
 procedure TfrmADLSMain.FormCreate(Sender: TObject);
 begin
   FADLSConnectorPresenter := TADLSConnectorPresenter.Create(Self);
@@ -138,6 +147,11 @@ end;
 function TfrmADLSMain.GetClientSecret: string;
 begin
   Result := edt_Connector_ClientSecret.Text;
+end;
+
+function TfrmADLSMain.GetFMDirectory: string;
+begin
+  Result := edt_Directory.Text;
 end;
 
 function TfrmADLSMain.GetFMBaseURL: string;

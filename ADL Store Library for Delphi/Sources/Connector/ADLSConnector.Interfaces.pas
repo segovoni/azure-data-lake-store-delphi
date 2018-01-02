@@ -3,8 +3,8 @@ unit ADLSConnector.Interfaces;
 interface
 
 type
-
-  IADLSConnector = interface ['{9BB081F9-887B-44B5-A352-49BE0261FB0A}']
+  IADLSView = interface
+  ['{9BB081F9-887B-44B5-A352-49BE0261FB0A}']
     // Input
     function GetBaseURL: string;
     function GetClientID: string;

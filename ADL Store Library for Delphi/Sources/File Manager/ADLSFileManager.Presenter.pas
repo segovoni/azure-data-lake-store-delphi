@@ -19,7 +19,7 @@ type
     FADLSFileManager: IADLSFileManager;
   public
     constructor Create(AADLSConnector: TADLSConnectorPresenter; AADLSFileManager: IADLSFileManager);
-    destructor Destroy; reintroduce;
+    destructor Destroy; override;
     function GetListFolders: TStringList;
     procedure UploadFile;
   end;
@@ -44,10 +44,9 @@ end;
 
 destructor TADLSFileManagerPresenter.Destroy;
 begin
-  FreeAndNil(FRESTClient);
-  FreeAndNil(FRESTRequest);
-  FreeAndNil(FRESTResponse);
-  inherited;
+  FRESTResponse.Free;
+  FRESTRequest.Free;
+  FRESTClient.Free;
 end;
 
 function TADLSFileManagerPresenter.GetListFolders: TStringList;
@@ -100,7 +99,8 @@ begin
   FRESTRequest.Params.Clear;
   FRESTRequest.ClearBody;
   FRESTRequest.Method := TRestRequestMethod.rmPUT;
-  FRESTRequest.Resource := '/webhdfs/v1/data_new/' + URIEncode(ExtractFileName(LFilePath))+ '?op=CREATE';
+  //FRESTRequest.Resource := '/webhdfs/v1/data_new/' + URIEncode(ExtractFileName(LFilePath))+ '?op=CREATE';
+  FRESTRequest.Resource := FADLSFileManager.GetFMDirectory + URIEncode(ExtractFileName(LFilePath))+ '?op=CREATE';
 
   LUploadStream := TFileStream.Create(LFilePath, fmOpenRead);
 
@@ -124,8 +124,8 @@ begin
     LEncoding := nil;
     LSize := TEncoding.GetBufferEncoding(LBuffer, LEncoding);
     LFileContent := LEncoding.GetString(LBuffer, LSize, Length(LBuffer) - LSize);
-
     FRESTRequest.AddBody(LFileContent, TRESTContentType.ctTEXT_PLAIN);
+
     FRESTRequest.Execute;
 
   finally

@@ -19,16 +19,16 @@ type
     procedure InitComponents;
     procedure LocalRESTRequestAfterExecute(Sender: TCustomRESTRequest);
   protected
-    FADLSConnector: IADLSConnector;
+    FADLSConnector: IADLSView;
     FAccessToken: string;
   public
-    constructor Create(AADLSConnectorView: IADLSConnector);
-    destructor Destroy; reintroduce;
+    constructor Create(AADLSConnectorView: IADLSView);
+    destructor Destroy; override;
     procedure GetAccessToken;
     function GetBaseURL: string;
     function GetClientID: string;
     property AccessToken: string read FAccessToken;
-    property Authenticator: TOAuth2Authenticator read FOAuth2_AzureDataLake;
+    //property Authenticator: TOAuth2Authenticator read FOAuth2_AzureDataLake;
   end;
 
 implementation
@@ -38,10 +38,10 @@ uses
 
 { TADLSPresenter }
 
-constructor TADLSConnectorPresenter.Create(AADLSConnectorView: IADLSConnector);
+constructor TADLSConnectorPresenter.Create(AADLSConnectorView: IADLSView);
 begin
   FADLSConnector := AADLSConnectorView;
-  FRESTClient := TRESTClient.Create(FADLSConnector.GetBaseURL);
+  FRESTClient := TRESTClient.Create(''{FADLSConnector.GetBaseURL});
   FRESTRequest := TRESTRequest.Create(nil);
   FRESTResponse := TRESTResponse.Create(nil);
   FOAuth2_AzureDataLake := TOAuth2Authenticator.Create(nil);
@@ -51,10 +51,10 @@ end;
 
 destructor TADLSConnectorPresenter.Destroy;
 begin
-  FreeAndNil(FRESTClient);
-  FreeAndNil(FRESTRequest);
-  FreeAndNil(FRESTResponse);
-  inherited;
+  FOAuth2_AzureDataLake.Free;
+  FRESTResponse.Free;
+  FRESTRequest.Free;
+  FRESTClient.Free;
 end;
 
 procedure TADLSConnectorPresenter.GetAccessToken;
