@@ -23,7 +23,7 @@ uses
   Vcl.StdCtrls, Vcl.ExtCtrls, ADLSConnector.Interfaces, ADLSConnector.Presenter,
   ADLSFileManager.Interfaces, ADLSFileManager.Presenter, IPPeerClient,
   REST.Response.Adapter, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope,
-  Vcl.ComCtrls, Vcl.Imaging.pngimage;
+  Vcl.ComCtrls, Vcl.Imaging.pngimage, System.Generics.Collections;
 
 type
   TfrmADLSMain= class(TForm, IADLSView, IADLSFileManager)
@@ -48,13 +48,19 @@ type
     imgAzureDataLake: TImage;
     sbResponse: TScrollBox;
     memoResponseData: TMemo;
-    edt_Directory: TLabeledEdit;
+    cbxADLSFolder: TComboBox;
+    lblFolder: TLabel;
+    btnFillCbxDirectory: TButton;
+    pnlFooter: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure btnGetTokenClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnOpenFileClick(Sender: TObject);
     procedure btnUploadClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnFillCbxDirectoryClick(Sender: TObject);
+  private const
+    APP_TITLE = 'Azure Data Lake Store Library for Delphi';
   private
     FADLSConnectorPresenter: TADLSConnectorPresenter;
     FADLSFileManagerPresenter: TADLSFileManagerPresenter;
@@ -73,6 +79,11 @@ type
     procedure SetAccessToken(const AValue: string);
     procedure SetResponseData(const AValue: string);
     procedure AddResponseData(const AValue: string);
+    // Output file manager
+    procedure DisplayFMMessage(AValue: string);
+    procedure SetFMDirectory(AValue: TList<string>);
+    procedure SetFMResponseData(const AValue: string);
+    procedure AddFMResponseData(const AValue: string);
   end;
 
 var
@@ -84,9 +95,19 @@ implementation
 
 { TfrmADLSConnector }
 
+procedure TfrmADLSMain.AddFMResponseData(const AValue: string);
+begin
+  memoResponseData.Lines.Add(AValue);
+end;
+
 procedure TfrmADLSMain.AddResponseData(const AValue: string);
 begin
   memoResponseData.Lines.Add(AValue);
+end;
+
+procedure TfrmADLSMain.btnFillCbxDirectoryClick(Sender: TObject);
+begin
+  FADLSFileManagerPresenter.ListFolders;
 end;
 
 procedure TfrmADLSMain.btnGetTokenClick(Sender: TObject);
@@ -112,6 +133,11 @@ begin
   FADLSFileManagerPresenter.GetListFolders;
 end;
 
+procedure TfrmADLSMain.DisplayFMMessage(AValue: string);
+begin
+  Application.MessageBox(PChar(AValue), PChar(APP_TITLE), MB_OK);
+end;
+
 procedure TfrmADLSMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FADLSFileManagerPresenter.Free;
@@ -122,6 +148,8 @@ procedure TfrmADLSMain.FormCreate(Sender: TObject);
 begin
   FADLSConnectorPresenter := TADLSConnectorPresenter.Create(Self);
   FADLSFileManagerPresenter := TADLSFileManagerPresenter.Create(FADLSConnectorPresenter, Self);
+
+  SetResponseData('');
 end;
 
 function TfrmADLSMain.GetAccessTokenEndpoint: string;
@@ -151,7 +179,7 @@ end;
 
 function TfrmADLSMain.GetFMDirectory: string;
 begin
-  Result := edt_Directory.Text;
+  Result := cbxADLSFolder.Text;
 end;
 
 function TfrmADLSMain.GetFMBaseURL: string;
@@ -167,6 +195,22 @@ end;
 procedure TfrmADLSMain.SetAccessToken(const AValue: string);
 begin
   edt_Connector_AccessToken.Text := AValue;
+end;
+
+procedure TfrmADLSMain.SetFMDirectory(AValue: TList<string>);
+var
+  i: Integer;
+begin
+  cbxADLSFolder.Clear;
+  cbxADLSFolder.Sorted := True;
+
+  for i := 0 to AValue.Count - 1 do
+    cbxADLSFolder.Items.Add(AValue.Items[i]);
+end;
+
+procedure TfrmADLSMain.SetFMResponseData(const AValue: string);
+begin
+  memoResponseData.Lines.Text := AValue;
 end;
 
 procedure TfrmADLSMain.SetResponseData(const AValue: string);

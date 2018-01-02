@@ -2,8 +2,8 @@ object frmADLSMain: TfrmADLSMain
   Left = 0
   Top = 0
   Caption = 'Azure Data Lake Store Library for Delphi'
-  ClientHeight = 483
-  ClientWidth = 784
+  ClientHeight = 517
+  ClientWidth = 828
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,11 +18,10 @@ object frmADLSMain: TfrmADLSMain
   object pnlHeader: TPanel
     Left = 0
     Top = 0
-    Width = 784
+    Width = 828
     Height = 57
     Align = alTop
     TabOrder = 0
-    ExplicitWidth = 824
     object imgAzureDataLake: TImage
       Left = 1
       Top = 1
@@ -86,20 +85,17 @@ object frmADLSMain: TfrmADLSMain
     Left = 0
     Top = 57
     Width = 528
-    Height = 426
-    ActivePage = tsFileManager
+    Height = 436
+    ActivePage = tsConnector
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 545
     object tsConnector: TTabSheet
       Caption = 'Connector'
-      ExplicitWidth = 512
-      ExplicitHeight = 453
       object sbConnector: TScrollBox
         Left = 0
         Top = 0
         Width = 520
-        Height = 398
+        Height = 408
         HorzScrollBar.Style = ssFlat
         VertScrollBar.Style = ssFlat
         Align = alClient
@@ -107,8 +103,6 @@ object frmADLSMain: TfrmADLSMain
         Color = clWhite
         ParentColor = False
         TabOrder = 0
-        ExplicitWidth = 506
-        ExplicitHeight = 424
         object edt_Connector_AccessTokenEndpoint: TLabeledEdit
           Left = 4
           Top = 24
@@ -206,22 +200,31 @@ object frmADLSMain: TfrmADLSMain
     object tsFileManager: TTabSheet
       Caption = 'File Manager'
       ImageIndex = 1
-      ExplicitWidth = 512
-      ExplicitHeight = 453
+      ExplicitLeft = 2
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 372
+      object lblFolder: TLabel
+        Left = 4
+        Top = 55
+        Width = 28
+        Height = 13
+        Caption = 'Foder'
+      end
       object edt_FilePath: TLabeledEdit
         Left = 4
-        Top = 117
+        Top = 125
         Width = 453
         Height = 21
         EditLabel.Width = 41
         EditLabel.Height = 13
         EditLabel.Caption = 'File Path'
         TabOrder = 0
-        TextHint = 'Select a file from file selector button..'
+        TextHint = 'Select a file.. use file selector button..'
       end
       object btnOpenFile: TButton
         Left = 464
-        Top = 115
+        Top = 123
         Width = 40
         Height = 25
         Caption = '...'
@@ -230,7 +233,7 @@ object frmADLSMain: TfrmADLSMain
       end
       object btnUpload: TButton
         Left = 343
-        Top = 155
+        Top = 163
         Width = 161
         Height = 38
         Caption = 'Upload'
@@ -248,46 +251,56 @@ object frmADLSMain: TfrmADLSMain
         TabOrder = 3
         Text = 'https://<DATA LAKE STORE NAME>.azuredatalakestore.net'
       end
-      object edt_Directory: TLabeledEdit
+      object cbxADLSFolder: TComboBox
         Left = 4
-        Top = 72
-        Width = 500
+        Top = 74
+        Width = 453
         Height = 21
-        EditLabel.Width = 44
-        EditLabel.Height = 13
-        EditLabel.Caption = 'Directory'
         TabOrder = 4
-        Text = '/webhdfs/v1/<DIRECTORY>'
+        TextHint = 'ADLS Folder.. use folder selector button..'
+      end
+      object btnFillCbxDirectory: TButton
+        Left = 464
+        Top = 72
+        Width = 40
+        Height = 25
+        Caption = '...'
+        TabOrder = 5
+        OnClick = btnFillCbxDirectoryClick
       end
     end
   end
   object sbResponse: TScrollBox
     Left = 528
     Top = 57
-    Width = 256
-    Height = 426
+    Width = 300
+    Height = 436
     VertScrollBar.Style = ssFlat
     Align = alRight
+    Anchors = [akLeft, akTop, akRight, akBottom]
     BorderStyle = bsNone
     TabOrder = 2
-    ExplicitLeft = 568
     object memoResponseData: TMemo
       Left = 0
       Top = 0
-      Width = 256
-      Height = 426
+      Width = 300
+      Height = 436
       Align = alClient
       Lines.Strings = (
         'memoResponseData')
       TabOrder = 0
-      ExplicitLeft = 3
-      ExplicitTop = 18
-      ExplicitWidth = 359
-      ExplicitHeight = 498
     end
   end
+  object pnlFooter: TPanel
+    Left = 0
+    Top = 493
+    Width = 828
+    Height = 24
+    Align = alBottom
+    TabOrder = 3
+  end
   object odSelectFile: TOpenDialog
-    Left = 348
-    Top = 81
+    Left = 652
+    Top = 129
   end
 end
