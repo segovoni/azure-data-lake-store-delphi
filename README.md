@@ -4,7 +4,7 @@ From [Microsoft-Docs](https://github.com/MicrosoftDocs/azure-docs/blob/master/ar
 
 ## Introduction
 
-Because I'm a Delphi developer, Microsoft Data Platform MVP since 2010 and because there are poor documentation about the integration between the Delphi programming language and Microsoft Azure services, I decided to do something for help Delphi developers to use Microsoft services and products. I developped a REST library to connect and manage an instance of Azure Data Lake Store.
+Because I'm a Delphi developer since and Microsoft Data Platform MVP since 2010 and because there are poor documentation about the integration between the Delphi programming language and Microsoft Azure services, I decided to do something for help Delphi developers to use Microsoft services and products. I developped a REST library to connect and manage an instance of Azure Data Lake Store.
 
 This library is intended for Delphi developers those want to build applications that are able to connect to an instance of Azure Data Lake Store, retrieve an access token, upload data to the store, retrieve folder list and so on.
 
