@@ -32,7 +32,7 @@ Using the "Get Token" button the application will get the access token to to be 
 
 ## Upload data
 
-The upload data operation is based on the WebHDFS REST API call defined here. The application must send a PUT request to the URL specified in the field "Base URL" that is shows in the following picture.
+The upload data operation is based on the WebHDFS REST API call defined [here](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/WebHDFS.html#Create_and_Write_to_a_File). The application must send a PUT request to the URL specified in the field "Base URL" that is shows in the following picture.
 
 ![Picture 2](https://github.com/segovoni/azure-data-lake-store-delphi/blob/master/ADL%20Store%20Library%20for%20Delphi/img/ADLSLibrary4D_FileManager.png)
 
