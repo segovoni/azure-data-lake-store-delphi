@@ -18,7 +18,7 @@ This section explains how to getting start to use the ADLSLibrary4D to connect t
 
 If you want to learn how to connect to an instance of Azure Data Lake from a Delphi application I suppose you already have an Azure subscription. Anyway, if you don't already have an Azure subscription, you can get one for free here: [get Azure free trial](https://azure.microsoft.com/en-us/free/).
 
-When your Azure subscription is ready to use, you have to create an Azure Active Directory "Web" Application, to to that, you must have completed the steps explained in [Service-to-service authentication with Data Lake Store using Azure Active Directory](https://docs.microsoft.com/en-us/azure/data-lake-store/data-lake-store-service-to-service-authenticate-using-active-directory).
+When your Azure subscription is ready to use, you have to create an Azure Active Directory "Web" Application, to do that, you must have completed the steps explained in [Service-to-service authentication with Data Lake Store using Azure Active Directory](https://docs.microsoft.com/en-us/azure/data-lake-store/data-lake-store-service-to-service-authenticate-using-active-directory).
 
 ## Service-to-service authentication
 
