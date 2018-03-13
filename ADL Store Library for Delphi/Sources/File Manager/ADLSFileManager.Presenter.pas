@@ -5,7 +5,7 @@ interface
 uses
   System.Classes, System.Generics.Collections, System.JSON.Readers,
   System.JSON.Types, REST.Client, ADLSFileManager.Interfaces,
-  ADLSConnector.Presenter;
+  ADLSConnector.Presenter, ADLSConnector.Interfaces;
 
 type
   TADLSResponseReader = class
@@ -18,7 +18,7 @@ type
   end;
 
 
-  TADLSFileManagerPresenter = class(TInterfacedObject)
+  TADLSFileManagerPresenter = class(TInterfacedObject, IADLSFileManagerPresenter)
   private const
     RESPONSE_DATA_SEPARATOR = '----------------------------';
     WEB_HDFS_RESOURCE_PATH = '/webhdfs/v1/';
@@ -28,16 +28,16 @@ type
     FRESTClient: TRESTClient;
     FRESTRequest: TRESTRequest;
     FRESTResponse: TRESTResponse;
-    FADLSConnector: TADLSConnectorPresenter;
+    FADLSConnectorPresenter: IADLSConnectorPresenter;
     FOperations: TDictionary<string, string>;
   private
     procedure ResetRESTComponentsToDefaults;
     procedure InitComponents;
     procedure LoadOperations;
   protected
-    FADLSFileManager: IADLSFileManager;
+    FADLSFileManagerView: IADLSFileManagerView;
   public
-    constructor Create(AADLSConnector: TADLSConnectorPresenter; AADLSFileManager: IADLSFileManager);
+    constructor Create(AADLSConnectorPresenter: IADLSConnectorPresenter; AADLSFileManagerView: IADLSFileManagerView);
     destructor Destroy; override;
     function GetListFolders: TStringList;
     procedure UploadFile;
@@ -53,13 +53,16 @@ uses
 
 { TADLSFileManagerPresenter }
 
-constructor TADLSFileManagerPresenter.Create(AADLSConnector: TADLSConnectorPresenter;
-  AADLSFileManager: IADLSFileManager);
+constructor TADLSFileManagerPresenter.Create(AADLSConnectorPresenter: IADLSConnectorPresenter;
+  AADLSFileManagerView: IADLSFileManagerView);
+var
+  LBaseURL: string;
 begin
-  FADLSConnector := AADLSConnector;
-  FADLSFileManager := AADLSFileManager;
+  FADLSConnectorPresenter := AADLSConnectorPresenter;
+  FADLSFileManagerView := AADLSFileManagerView;
 
-  FRESTClient := TRESTClient.Create(FADLSConnector.GetBaseURL);
+  LBaseURL := FADLSConnectorPresenter.GetBaseURL;
+  FRESTClient := TRESTClient.Create(LBaseURL);
   FRESTRequest := TRESTRequest.Create(nil);
   FRESTResponse := TRESTResponse.Create(nil);
 
@@ -100,7 +103,7 @@ begin
   InitComponents;
 
   // Get BaseURL from the view
-  FRESTClient.BaseURL := FADLSFileManager.GetFMBaseURL;
+  FRESTClient.BaseURL := FADLSFileManagerView.GetFMBaseURL;
 
   FRESTRequest.Params.Clear;
   FRESTRequest.ClearBody;
@@ -112,20 +115,20 @@ begin
   FRESTRequest.Params.AddHeader('Content-Type', 'text/plain');
 
   // Add token
-  FRESTRequest.Params.AddItem('Authorization', 'Bearer ' + FADLSConnector.AccessToken,
+  FRESTRequest.Params.AddItem('Authorization', 'Bearer ' + FADLSConnectorPresenter.AccessToken,
     TRESTRequestParameterKind.pkHTTPHEADER,
     [TRESTRequestParameterOption.poDoNotEncode]);
 
   try
     FRESTRequest.Execute;
-    FADLSFileManager.DisplayFMMessage('List folders retrieved successfully');
-    FADLSFileManager.SetFMDirectory(TADLSResponseReader.ListFoldersExtractor(FRESTResponse.JSONReader));
-    FADLSFileManager.AddFMResponseData(RESPONSE_DATA_SEPARATOR);
-    FADLSFileManager.AddFMResponseData(FRESTResponse.Content);
+    FADLSFileManagerView.DisplayFMMessage('List folders retrieved successfully');
+    FADLSFileManagerView.SetFMDirectory(TADLSResponseReader.ListFoldersExtractor(FRESTResponse.JSONReader));
+    FADLSFileManagerView.AddFMResponseData(RESPONSE_DATA_SEPARATOR);
+    FADLSFileManagerView.AddFMResponseData(FRESTResponse.Content);
   except on E: Exception do
     begin
-      FADLSFileManager.DisplayFMMessage('List folders retrieved with errors: ' + E.Message);
-      FADLSFileManager.SetFMDirectory(TList<string>.Create);
+      FADLSFileManagerView.DisplayFMMessage('List folders retrieved with errors: ' + E.Message);
+      FADLSFileManagerView.SetFMDirectory(TList<string>.Create);
     end;
   end;
 
@@ -164,10 +167,10 @@ begin
   InitComponents;
 
   // Get file path from the view
-  LFilePath := FADLSFileManager.GetFMFilePath;
+  LFilePath := FADLSFileManagerView.GetFMFilePath;
 
   // Get BaseURL from the view
-  FRESTClient.BaseURL := FADLSFileManager.GetFMBaseURL;
+  FRESTClient.BaseURL := FADLSFileManagerView.GetFMBaseURL;
 
   FRESTRequest.Params.Clear;
   FRESTRequest.ClearBody;
@@ -175,7 +178,7 @@ begin
 
   //FRESTRequest.Resource := '/webhdfs/v1/.../' + URIEncode(ExtractFileName(LFilePath))+ '?op=CREATE';
   FRESTRequest.Resource := WEB_HDFS_RESOURCE_PATH +
-                           FADLSFileManager.GetFMDirectory + '/' +
+                           FADLSFileManagerView.GetFMDirectory + '/' +
                            URIEncode(ExtractFileName(LFilePath)) +
                            FOperations.Items[OP_CREATE];
 
@@ -191,7 +194,7 @@ begin
     //FRESTRequest.AddAuthParameter('Authorization', 'Bearer ' + FADLSConnector.AccessToken + '',
     //  TRESTRequestParameterKind.pkHTTPHEADER,
     //  [TRESTRequestParameterOption.poDoNotEncode]);
-    FRESTRequest.Params.AddItem('Authorization', 'Bearer ' + FADLSConnector.AccessToken,
+    FRESTRequest.Params.AddItem('Authorization', 'Bearer ' + FADLSConnectorPresenter.AccessToken,
       TRESTRequestParameterKind.pkHTTPHEADER,
       [TRESTRequestParameterOption.poDoNotEncode]);
 
@@ -205,19 +208,19 @@ begin
 
     try
       FRESTRequest.Execute;
-      FADLSFileManager.DisplayFMMessage('Upload completed successfully');
+      FADLSFileManagerView.DisplayFMMessage('Upload completed successfully');
     except
       on E: EHTTPProtocolException do
       begin
-        FADLSFileManager.DisplayFMMessage('Upload completed with an HTTP protocol exception: ' + E.Message);
-        FADLSFileManager.AddFMResponseData('Error: ' + RESPONSE_DATA_SEPARATOR);
-        FADLSFileManager.AddFMResponseData(E.Message);
+        FADLSFileManagerView.DisplayFMMessage('Upload completed with an HTTP protocol exception: ' + E.Message);
+        FADLSFileManagerView.AddFMResponseData('Error: ' + RESPONSE_DATA_SEPARATOR);
+        FADLSFileManagerView.AddFMResponseData(E.Message);
       end;
 
       on E: Exception do
       begin
-        FADLSFileManager.AddFMResponseData('Error: ' + RESPONSE_DATA_SEPARATOR);
-        FADLSFileManager.AddFMResponseData(E.Message);
+        FADLSFileManagerView.AddFMResponseData('Error: ' + RESPONSE_DATA_SEPARATOR);
+        FADLSFileManagerView.AddFMResponseData(E.Message);
       end;
     end;
 

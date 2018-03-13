@@ -26,7 +26,7 @@ uses
   Vcl.ComCtrls, Vcl.Imaging.pngimage, System.Generics.Collections;
 
 type
-  TfrmADLSMain= class(TForm, IADLSView, IADLSFileManager)
+  TfrmADLSMain= class(TForm, IADLSConnectorView, IADLSFileManagerView)
     pnlHeader: TPanel;
     pgcMain: TPageControl;
     tsConnector: TTabSheet;

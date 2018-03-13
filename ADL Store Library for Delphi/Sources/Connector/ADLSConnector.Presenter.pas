@@ -6,7 +6,7 @@ uses
   ADLSConnector.Interfaces, REST.Client, REST.Authenticator.OAuth;
 
 type
-  TADLSConnectorPresenter = class(TInterfacedObject)
+  TADLSConnectorPresenter = class(TInterfacedObject, IADLSConnectorPresenter)
   private
     FRESTClient: TRESTClient;
     FRESTRequest: TRESTRequest;
@@ -19,15 +19,16 @@ type
     procedure InitComponents;
     procedure LocalRESTRequestAfterExecute(Sender: TCustomRESTRequest);
   protected
-    FADLSConnector: IADLSView;
+    FADLSConnector: IADLSConnectorView;
     FAccessToken: string;
+    function GetToken: string;
   public
-    constructor Create(AADLSConnectorView: IADLSView);
+    constructor Create(AADLSConnectorView: IADLSConnectorView);
     destructor Destroy; override;
     procedure GetAccessToken;
     function GetBaseURL: string;
     function GetClientID: string;
-    property AccessToken: string read FAccessToken;
+    property AccessToken: string read GetToken;
     //property Authenticator: TOAuth2Authenticator read FOAuth2_AzureDataLake;
   end;
 
@@ -38,7 +39,7 @@ uses
 
 { TADLSPresenter }
 
-constructor TADLSConnectorPresenter.Create(AADLSConnectorView: IADLSView);
+constructor TADLSConnectorPresenter.Create(AADLSConnectorView: IADLSConnectorView);
 begin
   FADLSConnector := AADLSConnectorView;
   FRESTClient := TRESTClient.Create(''{FADLSConnector.GetBaseURL});
@@ -87,6 +88,11 @@ end;
 function TADLSConnectorPresenter.GetClientID: string;
 begin
   FADLSConnector.GetClientID;
+end;
+
+function TADLSConnectorPresenter.GetToken: string;
+begin
+  Result := FAccessToken;
 end;
 
 procedure TADLSConnectorPresenter.InitComponents;

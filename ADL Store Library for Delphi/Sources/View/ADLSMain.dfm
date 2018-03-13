@@ -26,7 +26,7 @@ object frmADLSMain: TfrmADLSMain
       Left = 1
       Top = 1
       Width = 50
-      Height = 55
+      Height = 50
       Align = alLeft
       AutoSize = True
       Picture.Data = {
@@ -91,6 +91,10 @@ object frmADLSMain: TfrmADLSMain
     TabOrder = 1
     object tsConnector: TTabSheet
       Caption = 'Connector'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object sbConnector: TScrollBox
         Left = 0
         Top = 0
@@ -200,10 +204,6 @@ object frmADLSMain: TfrmADLSMain
     object tsFileManager: TTabSheet
       Caption = 'File Manager'
       ImageIndex = 1
-      ExplicitLeft = 2
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 372
       object lblFolder: TLabel
         Left = 4
         Top = 55
@@ -214,7 +214,7 @@ object frmADLSMain: TfrmADLSMain
       object edt_FilePath: TLabeledEdit
         Left = 4
         Top = 125
-        Width = 453
+        Width = 381
         Height = 21
         EditLabel.Width = 41
         EditLabel.Height = 13
@@ -223,18 +223,18 @@ object frmADLSMain: TfrmADLSMain
         TextHint = 'Select a file.. use file selector button..'
       end
       object btnOpenFile: TButton
-        Left = 464
+        Left = 391
         Top = 123
-        Width = 40
+        Width = 113
         Height = 25
-        Caption = '...'
+        Caption = 'Select file to upload..'
         TabOrder = 1
         OnClick = btnOpenFileClick
       end
       object btnUpload: TButton
-        Left = 343
+        Left = 312
         Top = 163
-        Width = 161
+        Width = 192
         Height = 38
         Caption = 'Upload'
         TabOrder = 2
@@ -254,17 +254,17 @@ object frmADLSMain: TfrmADLSMain
       object cbxADLSFolder: TComboBox
         Left = 4
         Top = 74
-        Width = 453
+        Width = 381
         Height = 21
         TabOrder = 4
         TextHint = 'ADLS Folder.. use folder selector button..'
       end
       object btnFillCbxDirectory: TButton
-        Left = 464
+        Left = 391
         Top = 72
-        Width = 40
+        Width = 113
         Height = 25
-        Caption = '...'
+        Caption = 'Get folders list..'
         TabOrder = 5
         OnClick = btnFillCbxDirectoryClick
       end
